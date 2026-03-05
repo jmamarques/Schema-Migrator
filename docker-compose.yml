@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  oracle:
+    image: gvenzl/oracle-free:latest
+    container_name: oracle-test
+    environment:
+      ORACLE_PASSWORD: oracle      # Password for SYS, SYSTEM, PDBADMIN
+      APP_USER: scott               # Optional: create an additional user
+      APP_USER_PASSWORD: tiger
+    ports:
+      - "1521:1521"                 # Oracle listener port
+    volumes:
+      - ./init-scripts:/container-entrypoint-initdb.d   # Auto-run scripts on first start
+      - oracle-data:/opt/oracle/oradata                  # Persist data (optional)
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  oracle-data:
